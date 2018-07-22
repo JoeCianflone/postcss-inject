@@ -5,7 +5,7 @@ const normalize = require('./utilities/normalize');
 const buildClassList = require('./utilities/buildClassList');
 
 const defaultOptions = {
-  allowFromMediaQueries: false,
+  allowFromMediaQueries: true,
 }
 
 module.exports = postcss.plugin('postcss-inject', options => {
