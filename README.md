@@ -157,5 +157,7 @@ Don't worry, if you look at this in horror you can disable this via the options.
 postcss([ require('postcss-inject', {allowFromMediaQueries: true}) ])
 ```
 
+I recommend that this plugin run last in your stack. If you're doing any sort of transforms where a class doesn't exist `@inject` would fail. If you run this last (or second-to-last right become something like mqpacker) you'll ensure that all classes are there and ready to go...you know...unless you messed up something :) Happy coding!
+
 
 See [PostCSS] docs for examples for your environment.
