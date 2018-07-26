@@ -6,7 +6,7 @@ const buildClassList = require('./utilities/buildClassList');
 
 const defaultOptions = {
   allowFromMediaQueries: true,
-}
+};
 
 module.exports = postcss.plugin('postcss-inject', options => {
   return css => {
@@ -23,8 +23,7 @@ module.exports = postcss.plugin('postcss-inject', options => {
           })
           .value();
 
-        atRule.before(decls)
-              .remove();
+        atRule.before(decls).remove();
       });
     });
   };
