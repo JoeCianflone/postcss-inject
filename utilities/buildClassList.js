@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-const buildClassList = css => {
+module.exports = css => {
   const classes = {};
 
   css.walkRules(rule => {
@@ -13,5 +13,3 @@ const buildClassList = css => {
 
   return classes;
 }
-
-module.exports = buildClassList;

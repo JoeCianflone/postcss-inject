@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-const find = (toApply, lookup, options, onError) => {
+module.exports = (toApply, lookup, options, onError) => {
   const items = _.get(lookup, toApply, []);
 
   if (_.isEmpty(items)) {
@@ -9,7 +9,7 @@ const find = (toApply, lookup, options, onError) => {
     throw onError(`\`@inject\` Too many classes named ${items} not sure which to pick`);
   }
 
-  [item] = items;
+  let [item] = items;
 
   if (! options.allowFromMediaQueries) {
     if (item.parent.type !== 'root') {
@@ -19,5 +19,3 @@ const find = (toApply, lookup, options, onError) => {
 
   return item.clone().nodes;
 }
-
-module.exports = find;
