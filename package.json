@@ -7,8 +7,11 @@
     "css",
     "postcss-plugin",
     "apply",
+    "inject",
     "classes",
-    "sass-mixins"
+    "sass-mixins",
+    "extend",
+    "sass-extend"
   ],
   "author": "Joe Cianflone <joe@cianflone.co>",
   "license": "MIT",
