@@ -1,6 +1,6 @@
 {
   "name": "postcss-inject",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "PostCSS plugin Inject classees into other classes",
   "keywords": [
     "postcss",
