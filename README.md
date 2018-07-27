@@ -12,7 +12,7 @@ Mixins with Sass work better, you create a bunch of properties in a mixin and yo
 
 What I wanted was a way to have the simplicity of `@extend` with the behavior of a `@mixin`.
 
-Funny thing is I wasn't the only one thinking of it. [Adam Wathen](https://github.com/adamwathan) was thinking about this when he created [Tailwinds](https://tailwindcss.com/). Adam created a PostCSS plugin for [Tailwinds](https://tailwindcss.com/) called `@apply` which did almost everything I wanted it to do...except it was part of [Tailwinds](https://tailwindcss.com/). Now, Tailwinds is great, I have no issue with it, but I wanted this without *needing* a framework. Also, I didn't want to call it `@apply` because that name was being used with custom properties in CSS. I think it's been deprecated, but there's a change it will be taken up again in the future. To me, `@apply` is a great name, but it comes with some potential baggage that I'd have to deal with later on.
+Funny thing is I wasn't the only one thinking of it. [Adam Wathen](https://github.com/adamwathan) was thinking about this when he created [Tailwinds](https://tailwindcss.com/). Adam created a PostCSS plugin for [Tailwinds](https://tailwindcss.com/) called `@apply` which did almost everything I wanted it to do...except it was part of [Tailwinds](https://tailwindcss.com/). Now, Tailwinds is great, I have no issue with it, but I wanted this without *needing* a framework. Also, I didn't want to call it `@apply` because that name was being used with custom properties in CSS. I think its been deprecated, but there's a change it will be taken up again in the future. To me, `@apply` is a great name, but it comes with some potential baggage that I'd have to deal with later on.
 
 
 ## CSS Usage
@@ -74,9 +74,9 @@ Output
 }
 ```
 
-### All props come over, even `!important`
+### All props come over, even `!important`...unless you disable it
 
-Tailwinds specifically strips the `!important` from classes. `@inject` does not. I'm probably going to add this ability back in as a option, but right now it's not there at all.
+Tailwinds specifically strips the `!important` from classes. By default, `@inject` will *not* strip `!important`, but there's an option `stripImportant` that you can set to `true` and it will...well strip the `!important`
 
 ```css
 .bar {
@@ -105,8 +105,6 @@ Output:
   border: 1px solid red;
 }
 ```
-
-Why this change? Well, I can understand why you'd not want to take `!important` over if you're working in a framework, but if you're using this outside of a framework I feel *not* taking this would be an unexpected behavior.
 
 ### This works inside of media queries...unless you disable it
 
@@ -154,7 +152,10 @@ Don't worry, if you look at this in horror you can disable this via the options.
 
 ```js
 // Default options
-postcss([ require('postcss-inject', {allowFromMediaQueries: true}) ])
+postcss([ require('postcss-inject', {
+  allowFromMediaQueries: true,
+  stripImportant: false, })
+]);
 ```
 
 I recommend that this plugin run last in your stack. If you're doing any sort of transforms where a class doesn't exist `@inject` would fail. If you run this last (or second-to-last right become something like mqpacker) you'll ensure that all classes are there and ready to go...you know...unless you messed up something :) Happy coding!
