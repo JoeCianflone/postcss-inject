@@ -1,8 +1,8 @@
 const postcss = require('postcss');
 const plugin = require('./');
 
-function run(input, config = {}, utilities = []) {
-  return postcss([plugin(config, utilities)]).process(input, { from: undefined });
+function run(input, config = {}) {
+  return postcss([plugin(config)]).process(input);
 }
 
 test('selectors with invalid characters do not need to be manually escaped', () => {
@@ -22,39 +22,39 @@ test('selectors with invalid characters do not need to be manually escaped', () 
   });
 });
 
-// test('it removes important from applied classes by default', () => {
-//   const input = `
-//     .a { color: red !important; }
-//     .b { @apply .a; }
-//   `
+test('it does not remove !important by default', () => {
+  const input = `
+    .a { color: red !important; }
+    .b { @inject .a; }
+  `;
 
-//   const expected = `
-//     .a { color: red !important; }
-//     .b { color: red; }
-//   `
+  const expected = `
+    .a { color: red !important; }
+    .b { color: red !important; }
+  `;
 
-//   return run(input).then(result => {
-//     expect(result.css).toEqual(expected)
-//     expect(result.warnings().length).toBe(0)
-//   })
-// })
+  return run(input).then(result => {
+    expect(result.css).toEqual(expected);
+    expect(result.warnings().length).toBe(0);
+  });
+});
 
-// test('applied rules can be made !important', () => {
-//   const input = `
-//     .a { color: red; }
-//     .b { @apply .a !important; }
-//   `
+test('it strips !important via stripImportant: true option', () => {
+  const input = `
+    .a { color: red !important; }
+    .b { @inject .a; }
+  `;
 
-//   const expected = `
-//     .a { color: red; }
-//     .b { color: red !important; }
-//   `
+  const expected = `
+    .a { color: red !important; }
+    .b { color: red; }
+  `;
 
-//   return run(input).then(result => {
-//     expect(result.css).toEqual(expected)
-//     expect(result.warnings().length).toBe(0)
-//   })
-// })
+  return run(input, { stripImportant: true }).then(result => {
+    expect(result.css).toEqual(expected);
+    expect(result.warnings().length).toBe(0);
+  });
+});
 
 test('it fails if the class does not exist', () => {
   return run('.b { @inject .a; }').catch(e => {
@@ -62,38 +62,38 @@ test('it fails if the class does not exist', () => {
   });
 });
 
-// test('applying classes that are defined in a media query is not supported', () => {
-//   const input = `
-//     @media (min-width: 300px) {
-//       .a { color: blue; }
-//     }
-//     .b {
-//       @apply .a;
-//     }
-//   `
-//   expect.assertions(1)
-//   return run(input).catch(e => {
-//     expect(e).toMatchObject({ name: 'CssSyntaxError' })
-//   })
-// })
+test('injecting classes defined in media queries fails with allowFromMediaQueries set to false', () => {
+  const input = `
+    @media (min-width: 300px) {
+      .a { color: blue; }
+    }
+    .b {
+      @inject .a;
+    }
+  `;
 
-// test('applying classes that are ever used in a media query is not supported', () => {
-//   const input = `
-//     .a {
-//       color: red;
-//     }
-//     @media (min-width: 300px) {
-//       .a { color: blue; }
-//     }
-//     .b {
-//       @apply .a;
-//     }
-//   `
-//   expect.assertions(1)
-//   return run(input).catch(e => {
-//     expect(e).toMatchObject({ name: 'CssSyntaxError' })
-//   })
-// })
+  expect.assertions(1);
+  return run(input, { allowFromMediaQueries: false }).catch(e => {
+    expect(e).toMatchObject({ name: 'CssSyntaxError' });
+  });
+});
+
+test('injecting classes defined in media queries allowed by default', () => {
+  const input = `
+    @media (min-width: 300px) { .a { color: blue; } }
+    .b { @inject .a; }
+  `;
+
+  const expected = `
+    @media (min-width: 300px) { .a { color: blue; } }
+    .b { color: blue; }
+  `;
+
+  return run(input).then(result => {
+    expect(result.css).toEqual(expected);
+    expect(result.warnings().length).toBe(0);
+  });
+});
 
 test('it does not match classes that include pseudo-selectors', () => {
   const input = `
@@ -104,6 +104,7 @@ test('it does not match classes that include pseudo-selectors', () => {
       @inject .a;
     }
   `;
+
   expect.assertions(1);
   return run(input).catch(e => {
     expect(e).toMatchObject({ name: 'CssSyntaxError' });
@@ -122,6 +123,7 @@ test('it does not match classes that have multiple rules', () => {
       color: blue;
     }
   `;
+
   expect.assertions(1);
   return run(input).catch(e => {
     expect(e).toMatchObject({ name: 'CssSyntaxError' });

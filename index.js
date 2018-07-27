@@ -6,6 +6,7 @@ const buildClassList = require('./utilities/buildClassList');
 
 const defaultOptions = {
   allowFromMediaQueries: true,
+  stripImportant: false,
 };
 
 module.exports = postcss.plugin('postcss-inject', options => {
@@ -15,13 +16,27 @@ module.exports = postcss.plugin('postcss-inject', options => {
 
     css.walkRules(rule => {
       rule.walkAtRules('inject', atRule => {
-        const decls = _(postcss.list.space(atRule.params))
-          .flatMap(cssClass => {
-            return find(normalize(cssClass), lookup, options, message => {
-              return atRule.error(message);
-            });
-          })
-          .value();
+        const classesAndProps = postcss.list.space(atRule.params);
+        let decls = _(classesAndProps);
+
+        if (options.stripImportant) {
+          decls = decls
+            .reject(cssClass => cssClass === '!important')
+            .flatMap(cssClass =>
+              find(normalize(cssClass), lookup, options, message => atRule.error(message))
+            )
+            .value();
+
+          _.tap(_.last(classesAndProps) === '!important', important => {
+            decls.forEach(decl => (decl.important = important));
+          });
+        } else {
+          decls = decls
+            .flatMap(cssClass =>
+              find(normalize(cssClass), lookup, options, message => atRule.error(message))
+            )
+            .value();
+        }
 
         atRule.before(decls).remove();
       });
