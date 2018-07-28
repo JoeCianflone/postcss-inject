@@ -1,7 +1,7 @@
 {
   "name": "postcss-inject",
   "version": "1.0.0",
-  "description": "PostCSS plugin Inject classees into other classes",
+  "description": "A postcss plugin that inserts one css classes properties into another, like Sass @extend...only better",
   "keywords": [
     "postcss",
     "css",

@@ -1,6 +1,6 @@
 # PostCSS Inject [![Build Status][ci-img]][ci]
 
-[PostCSS] plugin Inject classes into other classes in a way that makes sense.
+A [PostCSS] plugin that inserts CSS properties from one class into another, like Sass' @extend only better!
 
 [PostCSS]: https://github.com/postcss/postcss
 [ci-img]:  https://travis-ci.org/JoeCianflone/postcss-inject.svg
@@ -14,6 +14,12 @@ What I wanted was a way to have the simplicity of `@extend` with the behavior of
 
 Funny thing is I wasn't the only one thinking of it. [Adam Wathen](https://github.com/adamwathan) was thinking about this when he created [Tailwinds](https://tailwindcss.com/). Adam created a PostCSS plugin for [Tailwinds](https://tailwindcss.com/) called `@apply` which did almost everything I wanted it to do...except it was part of [Tailwinds](https://tailwindcss.com/). Now, Tailwinds is great, I have no issue with it, but I wanted this without *needing* a framework. Also, I didn't want to call it `@apply` because that name was being used with custom properties in CSS. I think its been deprecated, but there's a change it will be taken up again in the future. To me, `@apply` is a great name, but it comes with some potential baggage that I'd have to deal with later on.
 
+## Install
+
+```bash
+
+$ npm install postcss-inject
+```
 
 ## CSS Usage
 
